@@ -1,0 +1,11 @@
+name = 'Basic'
+license = 'MIT'
+description = 'Theme description'
+
+homepage = 'https://github.com/whitfieldsdad/whitfieldsdad.github.io'
+
+tags = ['blog']
+
+[author]
+  name = 'Tyler Fisher'
+  homepage = 'whitfieldsdad.github.io'

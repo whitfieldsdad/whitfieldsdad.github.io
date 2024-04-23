@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Tyler Fisher</title>
+    <link>http://localhost:1313/posts/</link>
+    <description>Recent content in Posts on Tyler Fisher</description>
+    <generator>Hugo 0.125.2</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 15 Jan 2023 09:00:00 -0700</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A simple vulnerability database</title>
+      <link>http://localhost:1313/posts/diy-vulnerability-database/</link>
+      <pubDate>Sun, 15 Jan 2023 09:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/posts/diy-vulnerability-database/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Toolboxes for software developers</title>
+      <link>http://localhost:1313/posts/toolboxes-for-software-developers/</link>
+      <pubDate>Sun, 15 Jan 2023 09:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/posts/toolboxes-for-software-developers/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Translating STIX 2 content into directed acyclic graphs (DAGs)</title>
+      <link>http://localhost:1313/posts/stix2-dag/</link>
+      <pubDate>Sun, 15 Jan 2023 09:00:00 -0700</pubDate>
+      <guid>http://localhost:1313/posts/stix2-dag/</guid>
+      <description>STIX 2 models relationships between STIX Domain Objects (SDOs) and STIX Cyber-observable Objects (SCOs) in two different ways:&#xA;Using STIX Relationship Objects (SROs) (i.e. within relationship or sighting objects); and Using embedded relationships (e.g. attack-pattern objects contain embedded references to x-mitre-tactic objects using the kill_chain_phases property). In this post, we&amp;rsquo;ll cover:&#xA;The set of SDOs, SROs, SCOs, and predicates outlined within the STIX 2.1 specification; The set of SDOs, SROs, and predicates used by MITRE when expressing ATT&amp;amp;CK (Enterprise, Mobile, ICS), CAPEC, NIST SP 800-53, and the relationships between ATT&amp;amp;CK techniques and NIST SP-800-53 controls in STIX 2.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,33 @@
+digraph G {
+    rankdir=LR;
+    node [shape=box];
+    edge [dir=none];
+
+    attack_pattern [label="attack-pattern"];
+    course_of_action [label="course-of-action"];
+    identity;
+    intrusion_set [label="intrusion-set"];
+    malware;
+    marking_definition [label="marking-definition"];
+    tool;
+    x_mitre_collection [label="x-mitre-collection"];
+    x_mitre_data_component [label="x-mitre-data-component"];
+    x_mitre_data_source [label="x-mitre-data-source"];
+    x_mitre_matrix [label="x-mitre-matrix"];
+    x_mitre_tactic [label="x-mitre-tactic"];
+    campaign;
+
+    attack_pattern -> campaign;
+    attack_pattern -> course_of_action;
+    attack_pattern -> intrusion_set;
+    attack_pattern -> malware;
+    attack_pattern -> tool;
+    campaign -> malware;
+    campaign -> tool;
+    intrusion_set -> campaign;
+    intrusion_set -> malware;
+    intrusion_set -> tool;
+    x_mitre_tactic -> attack_pattern;
+    x_mitre_data_source -> x_mitre_data_component;
+    x_mitre_data_component -> attack_pattern;
+}

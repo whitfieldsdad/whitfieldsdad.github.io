@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Translating STIX 2 content into directed acyclic graphs (DAGs) | Tyler Fisher</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+
+      <script src="/js/main.js"></script>
+
+
+</head>
+<body>
+  <header>
+    <h1>Tyler Fisher</h1>
+
+  <nav>
+    <ul>
+    <li>
+      <a href="/">Home</a>
+    </li>
+    <li>
+      <a aria-current="true" class="ancestor" href="/posts/">Posts</a>
+    </li>
+    <li>
+      <a href="/tags/">Tags</a>
+    </li>
+    </ul>
+  </nav>
+
+
+  </header>
+  <main>
+    
+  <h1>Translating STIX 2 content into directed acyclic graphs (DAGs)</h1>
+
+  
+  
+  <time datetime="2023-01-15T09:00:00-07:00">January 15, 2023</time>
+
+  <p>STIX 2 models relationships between STIX Domain Objects (SDOs) and STIX Cyber-observable Objects (SCOs) in two different ways:</p>
+<ol>
+<li>Using STIX Relationship Objects (SROs) (i.e. within <code>relationship</code> or <code>sighting</code> objects); and</li>
+<li>Using embedded relationships (e.g. <code>attack-pattern</code> objects contain embedded references to <code>x-mitre-tactic</code> objects using the <code>kill_chain_phases</code> property).</li>
+</ol>
+<p>In this post, we&rsquo;ll cover:</p>
+<ul>
+<li>The set of SDOs, SROs, SCOs, and predicates outlined within the <a href="https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html">STIX 2.1 specification</a>;</li>
+<li>The set of SDOs, SROs, and predicates used by MITRE when expressing <a href="https://github.com/mitre-attack/attack-stix-data/tree/master">ATT&amp;CK</a> (<a href="https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json">Enterprise</a>, <a href="https://github.com/mitre-attack/attack-stix-data/raw/master/mobile-attack/mobile-attack.json">Mobile</a>, <a href="https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/ics-attack/ics-attack.json">ICS</a>), <a href="https://github.com/mitre/cti/raw/master/capec/2.1/stix-capec.json">CAPEC</a>, <a href="https://github.com/center-for-threat-informed-defense/attack-control-framework-mappings/blob/main/frameworks/attack_12_1/nist800_53_r5/stix/nist800-53-r5-controls.json">NIST SP 800-53</a>, and the <a href="https://github.com/center-for-threat-informed-defense/attack-control-framework-mappings/blob/main/frameworks/attack_12_1/nist800_53_r5/stix/nist800-53-r5-mappings.json">relationships between ATT&amp;CK techniques and NIST SP-800-53 controls</a> in STIX 2.1 format;</li>
+<li>A set of objects which can be used to model STIX 2 content relationally (e.g. in <a href="https://en.wikipedia.org/wiki/Third_normal_form">third normal form (3NF)</a> or as a <a href="https://en.wikipedia.org/wiki/Snowflake_schema">snowflake</a>)</li>
+<li>A set of predicates which can be used to characterize embedded relationships (e.g. relationships between <code>attack-pattern</code> and <code>x-mitre-tactic</code> objects).</li>
+</ul>
+<p>The following datasets will be used:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Format</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ATT&amp;CK Enterprise</td>
+<td>STIX 2.1</td>
+<td><a href="https://github.com/mitre-attack/attack-stix-data/raw/master/enterprise-attack/enterprise-attack.json">https://github.com/mitre-attack/attack-stix-data/raw/master/enterprise-attack/enterprise-attack.json</a></td>
+</tr>
+<tr>
+<td>ATT&amp;CK Mobile</td>
+<td>STIX 2.1</td>
+<td><a href="https://github.com/mitre-attack/attack-stix-data/raw/master/mobile-attack/mobile-attack.json">https://github.com/mitre-attack/attack-stix-data/raw/master/mobile-attack/mobile-attack.json</a></td>
+</tr>
+<tr>
+<td>ATT&amp;CK ICS</td>
+<td>STIX 2.1</td>
+<td><a href="https://github.com/mitre-attack/attack-stix-data/blob/master/ics-attack/ics-attack.json">https://github.com/mitre-attack/attack-stix-data/blob/master/ics-attack/ics-attack.json</a></td>
+</tr>
+<tr>
+<td>CAPEC</td>
+<td>STIX 2.1</td>
+<td><a href="https://github.com/mitre/cti/raw/master/capec/2.1/stix-capec.json">https://github.com/mitre/cti/raw/master/capec/2.1/stix-capec.json</a></td>
+</tr>
+<tr>
+<td>NIST SP-800-53</td>
+<td>STIX 2.1</td>
+<td><a href="https://github.com/center-for-threat-informed-defense/attack-control-framework-mappings/raw/main/frameworks/attack_12_1/nist800_53_r5/stix/nist800-53-r5-controls.json">https://github.com/center-for-threat-informed-defense/attack-control-framework-mappings/raw/main/frameworks/attack_12_1/nist800_53_r5/stix/nist800-53-r5-controls.json</a></td>
+</tr>
+<tr>
+<td>MITRE ATT&amp;CK Enterprise to NIST SP-800-53</td>
+<td>STIX 2.1</td>
+<td><a href="https://github.com/center-for-threat-informed-defense/attack-control-framework-mappings/raw/main/frameworks/attack_12_1/nist800_53_r5/stix/nist800-53-r5-mappings.json">https://github.com/center-for-threat-informed-defense/attack-control-framework-mappings/raw/main/frameworks/attack_12_1/nist800_53_r5/stix/nist800-53-r5-mappings.json</a></td>
+</tr>
+</tbody>
+</table>
+<p>If you&rsquo;d like to follow along, you can use the following Python 3 script to explore all STIX 2.1 objects from the following datasets:</p>
+<ul>
+<li>MITRE ATT&amp;CK (Enterprise)</li>
+<li>MITRE ATT&amp;CK (Mobile)</li>
+<li>MITRE ATT&amp;CK (ICS)</li>
+<li>MITRE CAPEC</li>
+<li>NIST SP 800-53</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>python3 -m pip install stix2
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python3" data-lang="python3"></code></pre></div>
+  
+  <div>
+    <div>Tags:</div>
+    <ul>
+        <li><a href="/tags/data/">Data</a></li>
+    </ul>
+  </div>
+
+
+  </main>
+  <footer>
+    <p>Copyright 2024. All rights reserved.</p>
+
+  </footer>
+</body>
+</html>
